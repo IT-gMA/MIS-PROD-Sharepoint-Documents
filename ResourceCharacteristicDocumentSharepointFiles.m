@@ -22,23 +22,6 @@ let
         each try List.Last(Text.Split([directoryName], "_")) otherwise null,
         type nullable text
     ),
-    // Perform an inner join with the BookableResourceCharacteristics table using the extracted UID
-    /*MergedWithBookableResourceCharacteristics = Table.NestedJoin(
-        #"Add join key with BookableResourceCharacteristics",
-        {"_bkch.uid"},
-        BookableResourceCharacteristics,
-        {"_uid"},
-        "Merged",
-        JoinKind.Inner
-    ),
-    // Expand the merged table to include relevant fields from BookableResourceCharacteristics
-    // and rename columns to avoid conflicts and provide clear naming
-    ExpandedMergedWithBookableResourceCharacteristics = Table.ExpandTableColumn(
-        MergedWithBookableResourceCharacteristics,
-        "Merged",
-        {"bookableresourcecharacteristicid", "name", "ch.uid", "ch.name", "resource"},
-        {"bkch.uid", "bkch.name", "bkch.ch.uid", "bkch.ch.name", "bkch.bkr.uid"}
-    ),*/
     // Add directory path as a custom column for easier reference
     AddCustomColumn0 = Table.AddColumn(
         #"Add join key with BookableResourceCharacteristics", "directoryPath", each [Folder Path], type text
@@ -67,9 +50,11 @@ let
     AddCustomColumn4 = Table.AddColumn(
         AddCustomColumn3, "size.kb", each try Int64.From([Attributes][Size]) otherwise 0, Int64.Type
     ),
-    // Filter out files that have no actual data (size is 0 or negative)
+    // Filter out files that have no actual data (size is 0 or negative) as well no clear url
     // This ensures we only process files that contain meaningful content
-    #"Remove files with no data" = Table.SelectRows(AddCustomColumn4, each [size.kb] > 0),
+    #"Remove files with no data" = Table.SelectRows(
+        AddCustomColumn4, each [size.kb] > 0 and [fileUrl] <> null and [fileUrl] <> ""
+    ),
     // Add a count column with value 1 for each row to enable counting operations
     // This is useful for aggregation and summary calculations in downstream processes
     AddCountColumn = Table.AddColumn(#"Remove files with no data", "count", each 1, Int64.Type),
