@@ -1,0 +1,19 @@
+.
+├── Functions
+│   ├── BulkInvokeNullifyBlankString.m
+│   ├── GetCompliancyFlag.m
+│   ├── GetDaysTillExpiry.m
+│   ├── GetExpiryCategory.m
+│   ├── GetMassWeekOfYearVals.m
+│   ├── GetWeekOfYear.m
+│   ├── LinkFromDataflow.m
+│   └── NullifyBlankString.m
+├── Parameters
+│   ├── BookableResourceCharacteristicDirectory.txt
+│   ├── D365DataflowWorkspaceId.txt
+│   ├── MIS_Digital_Evolution_url.txt
+│   ├── MIS_PROD_EntitiesDataflowId.txt
+│   └── TrainingComplianceDataflowId.txt
+└── ResourceCharacteristicDocumentSharepointDirectoryPaths.m
+
+3 directories, 14 files
