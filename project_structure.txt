@@ -14,6 +14,7 @@
 │   ├── MIS_Digital_Evolution_url.txt
 │   ├── MIS_PROD_EntitiesDataflowId.txt
 │   └── TrainingComplianceDataflowId.txt
-└── ResourceCharacteristicDocumentSharepointDirectoryPaths.m
+├── README.md
+└── ResourceCharacteristicDocumentSharepointFiles.m
 
-3 directories, 14 files
+3 directories, 15 files
