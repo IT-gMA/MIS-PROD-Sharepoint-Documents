@@ -19,7 +19,8 @@ let
     #"Add join key with BookableResourceCharacteristics" = Table.AddColumn(
         #"Get directory's name",
         "_bkch.uid",
-        each try List.Last(Text.Split([directoryName], "_")) otherwise null,
+        // Bookable Resource Characteristics's UID extracted from Dataflow is always uppercase
+        each try Text.Upper(List.Last(Text.Split([directoryName], "_"))) otherwise null,
         type nullable text
     ),
     // Add directory path as a custom column for easier reference
