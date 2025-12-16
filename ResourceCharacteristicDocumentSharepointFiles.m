@@ -20,7 +20,8 @@ let
         #"Get directory's name",
         "_bkch.uid",
         // Bookable Resource Characteristics's UID extracted from Dataflow is always uppercase
-        each try Text.Upper(List.Last(Text.Split([directoryName], "_"))) otherwise null,
+        // also need to remove the hyphen (-) from the joined UID
+        each try Text.Upper(Text.Replace(List.Last(Text.Split([directoryName], "_")), "-", "")) otherwise null,
         type nullable text
     ),
     // Add directory path as a custom column for easier reference
