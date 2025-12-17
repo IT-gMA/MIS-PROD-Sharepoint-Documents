@@ -32,30 +32,37 @@ let
     AddCustomColumn1 = Table.AddColumn(AddCustomColumn0, "fileName", each [Name], type text),
     // Construct the full file path by combining directory path and file name
     AddCustomColum2 = Table.AddColumn(AddCustomColumn1, "filePath", each [directoryPath] & [fileName], type text),
-    // Create a properly URL-encoded file URL by encoding each component separately
+    // Create a properly URL-encoded file + directory URL by encoding each component separately
     // This ensures special characters in directory names and file names are properly handled
     AddCustomColumn3 = Table.AddColumn(
         AddCustomColum2,
-        "fileUrl",
+        "directoryUrl",
         each
             MIS_Digital_Evolution_url
                 & "/"
                 & Uri.EscapeDataString(BookableResourceCharacteristicDirectory)
                 & "/"
-                & Uri.EscapeDataString([directoryName])
-                & "/"
-                & Uri.EscapeDataString([fileName]),
+                & Uri.EscapeDataString([directoryName]),
         type text
+    ),
+    AddCustomColumn4 = Table.AddColumn(
+        AddCustomColumn3, "fileUrl", each [directoryUrl] & "/" & Uri.EscapeDataString([fileName]), type text
     ),
     // Extract file size from the Attributes column and convert to kilobytes
     // Uses try/otherwise to handle cases where the Size attribute might be missing
-    AddCustomColumn4 = Table.AddColumn(
-        AddCustomColumn3, "size.kb", each try Int64.From([Attributes][Size]) otherwise 0, Int64.Type
+    AddCustomColumn5 = Table.AddColumn(
+        AddCustomColumn4, "size.kb", each try Int64.From([Attributes][Size]) otherwise 0, Int64.Type
     ),
     // Filter out files that have no actual data (size is 0 or negative) as well no clear url
     // This ensures we only process files that contain meaningful content
     #"Remove files with no data" = Table.SelectRows(
-        AddCustomColumn4, each [size.kb] > 0 and [fileUrl] <> null and [fileUrl] <> ""
+        AddCustomColumn5,
+        each
+            [size.kb] > 0
+            and [directoryUrl] <> null
+            and [directoryUrl] <> ""
+            and [fileUrl] <> null
+            and [fileUrl] <> ""
     ),
     // Add a count column with value 1 for each row to enable counting operations
     // This is useful for aggregation and summary calculations in downstream processes
